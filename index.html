@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Science Simulations</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #111827;
+      --accent: #fbbf24;
+      --accent2: #38bdf8;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border-radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.06), transparent 55%),
+                  linear-gradient(145deg, #020617 0%, #020111 40%, #050816 100%);
+      border-radius: 26px;
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.8);
+      padding: 20px 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h1 span.emoji {
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 520px;
+    }
+
+    .teacher-chip {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.18);
+      border: 1px solid rgba(56,189,248,0.7);
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .teacher-chip span.icon {
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .card {
+      background: radial-gradient(circle at top, rgba(248,250,252,0.06), transparent 50%),
+                  linear-gradient(160deg, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(148,163,184,0.6);
+      padding: 12px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at top left, rgba(250,204,21,0.15), transparent 50%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .card-title span.icon {
+      font-size: 1.6rem;
+    }
+
+    .card-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.7);
+    }
+
+    .card-body {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .card-meta {
+      font-size: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 2px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 2px 7px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill span.icon {
+      font-size: 0.9rem;
+    }
+
+    .launch-row {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .launch-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: radial-gradient(circle at top, #fbbf24 0%, #f97316 45%, #ec4899 100%);
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.8);
+      text-decoration: none;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+    }
+
+    .launch-btn span.icon {
+      font-size: 1rem;
+    }
+
+    .launch-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.9);
+      filter: brightness(1.04);
+    }
+
+    .launch-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.85);
+    }
+
+    .launch-note {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .coming-soon {
+      opacity: 0.7;
+      border-style: dashed;
+    }
+
+    .coming-soon .launch-btn {
+      background: linear-gradient(135deg, rgba(148,163,184,0.6), rgba(55,65,81,0.9));
+      color: #e5e7eb;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .coming-soon .launch-btn:hover {
+      transform: none;
+      box-shadow: none;
+      filter: none;
+    }
+
+    footer {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 6px;
+      border-top: 1px solid rgba(31,41,55,0.9);
+      padding-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    footer ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    footer li {
+      margin-bottom: 2px;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 10px;
+      }
+      .app {
+        padding: 14px 14px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>
+          <span class="emoji">🔬</span>
+          Interactive Science Simulations
+        </h1>
+        <p class="subtitle">
+          A collection of small web labs for curious students. Click a card to open a simulation in a new tab.
+        </p>
+      </div>
+      <div class="teacher-chip">
+        <span class="icon">👩‍🏫</span>
+        <span><strong>Teacher tip:</strong> let students predict what will happen before you press “Launch”.</span>
+      </div>
+    </header>
+
+    <section class="grid">
+      <!-- SOUND WAVES LAB CARD -->
+      <article class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">🎧</span>
+            <span>Sound Waves & Hearing Explorer</span>
+          </div>
+          <span class="card-tag">Physics • Year 7–8</span>
+        </div>
+        <div class="card-body">
+          Explore how different instruments (trumpet, piano, guitar, ukulele) create sound waves.
+          Change pitch and loudness, and see what a human 5 m away can actually hear.
+          Great for introducing <strong>frequency</strong>, <strong>amplitude</strong>, and the
+          <strong>hearing range</strong> of different ages.
+        </div>
+        <div class="card-meta">
+          <span class="pill">
+            <span class="icon">🧪</span> Concept: sound, waves, hearing
+          </span>
+          <span class="pill">
+            <span class="icon">👦</span> Ages: ~10–13
+          </span>
+        </div>
+        <div class="launch-row">
+          <!-- IMPORTANT: this link assumes your simulation file is named instruments.html -->
+          <!-- If your file has a different name, change the href to match -->
+          <a href="instruments.html" class="launch-btn" target="_blank" rel="noopener">
+            <span class="icon">🚀</span>
+            Launch Simulation
+          </a>
+          <span class="launch-note">
+            Opens in a new tab. Ask: “How can we see loud vs quiet in the waves?”
+          </span>
+        </div>
+      </article>
+
+      <!-- PLACEHOLDER FOR FUTURE SIM 1 -->
+      <article class="card coming-soon">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">🌍</span>
+            <span>Simulation 2 – Your Next Idea</span>
+          </div>
+          <span class="card-tag">Coming soon</span>
+        </div>
+        <div class="card-body">
+          You can reuse this card for another topic (for example: gravity & orbits, forces & motion,
+          or the water cycle). Change the title, description, and the link below.
+        </div>
+        <div class="card-meta">
+          <span class="pill">
+            <span class="icon">✨</span> Replace with any subject
+          </span>
+        </div>
+        <div class="launch-row">
+          <!-- When ready, change example.html to your new file name and remove coming-soon styles -->
+          <a href="example.html" class="launch-btn">
+            Choose file & link it
+          </a>
+          <span class="launch-note">
+            Edit this card in <code>index.html</code> to connect a new simulation.
+          </span>
+        </div>
+      </article>
+
+      <!-- PLACEHOLDER FOR FUTURE SIM 2 -->
+      <article class="card coming-soon">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">🧬</span>
+            <span>Simulation 3 – Your Next Idea</span>
+          </div>
+          <span class="card-tag">Coming soon</span>
+        </div>
+        <div class="card-body">
+          Another reserved space. You might use this for a biology or chemistry interactive:
+          cells, diffusion, states of matter, or reactions.
+        </div>
+        <div class="card-meta">
+          <span class="pill">
+            <span class="icon">🧑‍🔬</span> Student-friendly
+          </span>
+        </div>
+        <div class="launch-row">
+          <a href="example2.html" class="launch-btn">
+            Choose file & link it
+          </a>
+          <span class="launch-note">
+            Duplicate this card for as many simulations as you like.
+          </span>
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      <div>
+        <strong>How to add a new simulation:</strong>
+        <ul>
+          <li>Create a new <code>.html</code> file in the same GitHub repo.</li>
+          <li>Copy one of your simulations into it.</li>
+          <li>Change the <code>href="..."</code> in one of the cards above to point to that file.</li>
+        </ul>
+      </div>
+      <div>
+        <strong>Student prompts:</strong>
+        <ul>
+          <li>“What do you predict will change when we move this slider?”</li>
+          <li>“Explain what the graph or waves are telling us in your own words.”</li>
+        </ul>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
