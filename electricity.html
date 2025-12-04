@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" class="electricity-html">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electricity Practice - House Circuit Runner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="electricity-page">
+  <div class="page">
+    <header>
+      <h1><span class="icon">⚡</span>Electricity Practice — House Circuit Runner</h1>
+      <span class="pill">Arrow keys or WASD to move</span>
+    </header>
+    <p class="subtitle">
+      Patrol the house and garden to tag every circuit part you can find. Each component you collect boosts your score, and the longer
+      you stay moving the higher your streak climbs. Hunt for LDR porch lights, LED strips, switches, resistors, fuses, and a hidden solar cell.
+    </p>
+
+    <div class="hud">
+      <p><strong>Goal:</strong> Find all the parts, rack up points, and keep exploring.</p>
+      <div class="pill">Score updates as you roam + 100 per discovery</div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="game" width="1100" height="620"></canvas>
+      <div class="overlay">
+        <h2>Scanner</h2>
+        <div>Score: <span class="stat" id="score">0</span></div>
+        <div>Found: <span class="stat" id="found">0</span> / <span id="total">0</span></div>
+        <ul id="log"></ul>
+      </div>
+      <div class="legend">
+        <div class="row"><span class="box player"></span> Player</div>
+        <div class="row"><span class="box collectible"></span> Collectible</div>
+        <div class="row"><span class="box wall"></span> Wall</div>
+        <div class="row"><span class="box grass"></span> Garden grass</div>
+      </div>
+    </div>
+
+    <footer>
+      Tip: Cut around walls, slip through the hallway, and sweep the backyard. Score ticks up slowly over time, but the big boosts come
+      from tagging every circuit part you see.
+    </footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
