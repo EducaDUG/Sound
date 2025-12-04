@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>States of Matter Lab</title>
+  <style>
+    :root {
+      --bg: #0d0f1f;
+      --panel: #11142b;
+      --panel-2: #101a38;
+      --text: #f4f6ff;
+      --muted: #b6c1e9;
+      --accent-hot: #ff7ac3;
+      --accent-cool: #5dd1ff;
+      --accent-mid: #ffd166;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 18% 20%, rgba(255, 122, 195, 0.08), transparent 45%),
+                  radial-gradient(circle at 80% 20%, rgba(93, 209, 255, 0.08), transparent 40%),
+                  linear-gradient(135deg, #0b0f23, #0c102a 45%, #0b1637 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1200px;
+      background: linear-gradient(145deg, rgba(17,20,43,0.9), rgba(16,26,56,0.95));
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.65);
+      padding: 16px 16px 12px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.4fr);
+    }
+
+    @media (max-width: 960px) {
+      .app { grid-template-columns: 1fr; }
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h1 span.emoji { font-size: 1.8rem; }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      max-width: 700px;
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.04), transparent 55%), var(--panel);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+    }
+
+    .panel-title {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag {
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .controls { display: flex; flex-direction: column; gap: 10px; }
+
+    .slider-group { display: flex; flex-direction: column; gap: 4px; }
+
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 0.82rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      background: transparent;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 8px;
+      background: linear-gradient(90deg, var(--accent-cool), var(--accent-mid), var(--accent-hot));
+      border-radius: 999px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #0c102a;
+      margin-top: -4px;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.18);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 8px;
+      background: linear-gradient(90deg, var(--accent-cool), var(--accent-mid), var(--accent-hot));
+      border-radius: 999px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #0c102a;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.18);
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: #0c102a;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    .btn:hover { transform: translateY(-1px) scale(1.01); filter: brightness(1.05); }
+    .btn:active { transform: translateY(0); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+
+    .btn-heat { background: radial-gradient(circle at top, #ffd6e8 0%, #ff7ac3 55%, #f72585 100%); }
+    .btn-cool { background: radial-gradient(circle at top, #d6f5ff 0%, #5dd1ff 55%, #0091d5 100%); }
+    .btn-reset { background: radial-gradient(circle at top, #fff7d6 0%, #ffd166 55%, #ff9e1c 100%); }
+
+    .state-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.09);
+      font-weight: 700;
+    }
+
+    .state-chip .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+    }
+
+    .fact {
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fact strong { color: var(--text); }
+
+    .fact::after {
+      content: "";
+      position: absolute;
+      inset: -20% -40%;
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.04), transparent 60%);
+      pointer-events: none;
+    }
+
+    .visualizer {
+      position: relative;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06), transparent 55%),
+                  radial-gradient(circle at 80% 10%, rgba(255,255,255,0.04), transparent 60%),
+                  #0c132e;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.05);
+      min-height: 480px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 16px 40px rgba(0,0,0,0.5);
+    }
+
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .readout-bar {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: rgba(12,16,42,0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .readout-bar .label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .readout-bar .value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--muted); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,0.08); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="left panel">
+      <h1><span class="emoji">🧊🔥</span>States of Matter Lab</h1>
+      <p class="subtitle">Slide the temperature to watch particles shift between solid, liquid, and gas. Add or remove energy and look for clues like spacing, vibration, and collisions.</p>
+
+      <div class="controls">
+        <div class="slider-group">
+          <div class="slider-label-row">
+            <strong>Temperature</strong>
+            <span id="tempLabel">20°C</span>
+          </div>
+          <input id="tempSlider" type="range" min="-50" max="150" value="20" />
+        </div>
+
+        <div class="button-row">
+          <button class="btn btn-heat" id="btnHeat">🔥 Add heat (+10°C)</button>
+          <button class="btn btn-cool" id="btnCool">❄️ Cool down (-10°C)</button>
+          <button class="btn btn-reset" id="btnReset">🔁 Reset</button>
+        </div>
+
+        <div class="state-chip" id="stateChip">
+          <span class="dot" id="stateDot"></span>
+          <span id="stateLabel">Liquid</span>
+        </div>
+
+        <div class="facts">
+          <div class="fact" id="factEnergy"><strong>Energy:</strong> particles vibrate, flow, or fly depending on temperature.</div>
+          <div class="fact" id="factSpacing"><strong>Spacing:</strong> closely packed, sliding past, or far apart.</div>
+          <div class="fact" id="factMovement"><strong>Movement:</strong> gentle jitter, swirls, or fast streaks.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right panel visualizer">
+      <canvas id="particleCanvas"></canvas>
+      <div class="readout-bar">
+        <div>
+          <div class="label">State</div>
+          <div class="value" id="readoutState">Liquid</div>
+        </div>
+        <div>
+          <div class="label">Average speed</div>
+          <div class="value" id="readoutSpeed">Medium</div>
+        </div>
+        <div>
+          <div class="label">Collisions</div>
+          <div class="value" id="readoutCollisions">Frequent</div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot" style="background: #5dd1ff;"></span> Cool (solid)</div>
+          <div class="legend-item"><span class="legend-dot" style="background: #ffd166;"></span> Warm (liquid)</div>
+          <div class="legend-item"><span class="legend-dot" style="background: #ff7ac3;"></span> Hot (gas)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    const slider = document.getElementById('tempSlider');
+    const tempLabel = document.getElementById('tempLabel');
+    const stateLabel = document.getElementById('stateLabel');
+    const stateDot = document.getElementById('stateDot');
+    const stateChip = document.getElementById('stateChip');
+    const factEnergy = document.getElementById('factEnergy');
+    const factSpacing = document.getElementById('factSpacing');
+    const factMovement = document.getElementById('factMovement');
+    const readoutState = document.getElementById('readoutState');
+    const readoutSpeed = document.getElementById('readoutSpeed');
+    const readoutCollisions = document.getElementById('readoutCollisions');
+
+    const heatBtn = document.getElementById('btnHeat');
+    const coolBtn = document.getElementById('btnCool');
+    const resetBtn = document.getElementById('btnReset');
+
+    const stateConfig = {
+      solid: {
+        color: '#5dd1ff',
+        bg: 'rgba(93,209,255,0.22)',
+        speed: 0.35,
+        jitter: 0.02,
+        padding: 80,
+        label: 'Solid',
+        readout: { speed: 'Low', collisions: 'Gentle taps' },
+        facts: {
+          energy: 'Energy: particles vibrate in place in a fixed pattern.',
+          spacing: 'Spacing: tightly packed in a lattice.',
+          movement: 'Movement: tiny jitter, no flowing.'
+        }
+      },
+      liquid: {
+        color: '#ffd166',
+        bg: 'rgba(255,209,102,0.22)',
+        speed: 0.9,
+        jitter: 0.08,
+        padding: 45,
+        label: 'Liquid',
+        readout: { speed: 'Medium', collisions: 'Frequent slides' },
+        facts: {
+          energy: 'Energy: particles have enough energy to slide past each other.',
+          spacing: 'Spacing: still close but not locked together.',
+          movement: 'Movement: flowing swirls and bumps.'
+        }
+      },
+      gas: {
+        color: '#ff7ac3',
+        bg: 'rgba(255,122,195,0.22)',
+        speed: 1.8,
+        jitter: 0.12,
+        padding: 18,
+        label: 'Gas',
+        readout: { speed: 'High', collisions: 'Quick ricochets' },
+        facts: {
+          energy: 'Energy: lots of energy, particles zoom everywhere.',
+          spacing: 'Spacing: far apart with empty space between.',
+          movement: 'Movement: rapid streaks and collisions.'
+        }
+      }
+    };
+
+    let particles = [];
+    let temperature = Number(slider.value);
+    let currentStateKey = 'liquid';
+
+    function resizeCanvas() {
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    function createParticles(count) {
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.clientWidth,
+        y: Math.random() * canvas.clientHeight,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        size: 6 + Math.random() * 2,
+      }));
+    }
+
+    function stateFromTemp(temp) {
+      if (temp < 0) return 'solid';
+      if (temp < 100) return 'liquid';
+      return 'gas';
+    }
+
+    function setTemperature(temp) {
+      temperature = Math.max(-50, Math.min(150, temp));
+      slider.value = temperature;
+      tempLabel.textContent = `${temperature}\u00b0C`;
+      updateState();
+    }
+
+    function updateState() {
+      currentStateKey = stateFromTemp(temperature);
+      const cfg = stateConfig[currentStateKey];
+      stateLabel.textContent = cfg.label;
+      stateDot.style.background = cfg.color;
+      stateChip.style.borderColor = cfg.bg;
+      stateChip.style.boxShadow = `0 0 0 1px ${cfg.bg}, 0 12px 30px rgba(0,0,0,0.4)`;
+
+      factEnergy.innerHTML = `<strong>Energy:</strong> ${cfg.facts.energy.split(': ')[1]}`;
+      factSpacing.innerHTML = `<strong>Spacing:</strong> ${cfg.facts.spacing.split(': ')[1]}`;
+      factMovement.innerHTML = `<strong>Movement:</strong> ${cfg.facts.movement.split(': ')[1]}`;
+
+      readoutState.textContent = cfg.label;
+      readoutSpeed.textContent = cfg.readout.speed;
+      readoutCollisions.textContent = cfg.readout.collisions;
+
+      canvas.style.boxShadow = `inset 0 0 0 1px rgba(255,255,255,0.05), 0 16px 40px rgba(0,0,0,0.5), 0 0 0 3px ${cfg.bg}`;
+    }
+
+    function tick() {
+      const cfg = stateConfig[currentStateKey];
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      ctx.clearRect(0, 0, width, height);
+
+      const minX = cfg.padding;
+      const maxX = width - cfg.padding;
+      const minY = cfg.padding;
+      const maxY = height - cfg.padding;
+
+      particles.forEach(p => {
+        const targetSpeed = cfg.speed;
+        p.vx += (Math.random() - 0.5) * cfg.jitter;
+        p.vy += (Math.random() - 0.5) * cfg.jitter;
+
+        const speed = Math.hypot(p.vx, p.vy) || 0.001;
+        const scale = targetSpeed / speed;
+        p.vx *= scale;
+        p.vy *= scale;
+
+        p.x += p.vx * 4;
+        p.y += p.vy * 4;
+
+        if (p.x < minX) { p.x = minX; p.vx *= -1; }
+        if (p.x > maxX) { p.x = maxX; p.vx *= -1; }
+        if (p.y < minY) { p.y = minY; p.vy *= -1; }
+        if (p.y > maxY) { p.y = maxY; p.vy *= -1; }
+
+        ctx.beginPath();
+        ctx.fillStyle = cfg.color;
+        ctx.globalAlpha = 0.85;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = 0.5;
+        ctx.arc(p.x, p.y, p.size + 3, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+
+      requestAnimationFrame(tick);
+    }
+
+    slider.addEventListener('input', (e) => {
+      setTemperature(Number(e.target.value));
+    });
+
+    heatBtn.addEventListener('click', () => setTemperature(temperature + 10));
+    coolBtn.addEventListener('click', () => setTemperature(temperature - 10));
+    resetBtn.addEventListener('click', () => setTemperature(20));
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createParticles(80);
+    });
+
+    resizeCanvas();
+    createParticles(80);
+    updateState();
+    tick();
+  </script>
+</body>
+</html>
