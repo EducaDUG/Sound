@@ -20,6 +20,3 @@ If you're not seeing the new background or card animations on your published sit
    - To clear cached CSS, use Ctrl+Shift+R (Windows/Linux) or Cmd+Shift+R (macOS) on the published page.
 
 If you prefer, you can download the updated `index.html` from this branch and upload it directly to your hosting provider—the site is fully static.
-
-## Resolving merge conflicts
-If you see merge conflict options around the electricity practice inspect cards, choose the version that keeps the thumbnail image, symbol hint, and scan button together. In most editors this is the **incoming change** (the block that starts with `<article class="inspect-card">` and includes the `<img class="thumb" ...>` line) so the cards render with the new photos and controls.
