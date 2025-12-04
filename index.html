@@ -6,21 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg: #050816;
-      --card: #111827;
+      --bg: #ffe7f3;
+      --card: #fff4fb;
       --accent: #fbbf24;
-      --accent2: #38bdf8;
-      --text: #f9fafb;
-      --muted: #9ca3af;
+      --accent2: #0ea5e9;
+      --text: #2c0f1e;
+      --muted: #7a3f55;
       --radius: 18px;
     }
 
     * { box-sizing: border-box; }
 
+    html {
+      min-height: 100%;
+      background: #ff9ac8;
+    }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1f2937 0, #020617 60%, #000 100%);
+      background: linear-gradient(135deg, #ffeef7 0%, #ffd3e9 45%, #ff9ac8 100%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -32,11 +37,11 @@
     .app {
       width: 100%;
       max-width: 1100px;
-      background: radial-gradient(circle at top left, rgba(248,250,252,0.06), transparent 55%),
-                  linear-gradient(145deg, #020617 0%, #020111 40%, #020617 100%);
+      background: radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.2), transparent 55%),
+                  linear-gradient(145deg, #ffe4f2 0%, #ffbfdc 45%, #ff9ac8 100%);
       border-radius: 26px;
-      border: 1px solid rgba(148,163,184,0.5);
-      box-shadow: 0 26px 80px rgba(0,0,0,0.9);
+      border: 1px solid rgba(255, 182, 193, 0.9);
+      box-shadow: 0 26px 80px rgba(255, 105, 180, 0.35);
       padding: 20px 22px 18px;
       display: flex;
       flex-direction: column;
@@ -71,12 +76,13 @@
     .teacher-chip {
       padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(56,189,248,0.18);
-      border: 1px solid rgba(56,189,248,0.7);
+      background: rgba(14,165,233,0.12);
+      border: 1px solid rgba(14,165,233,0.6);
       font-size: 0.8rem;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      color: #0b3a52;
     }
 
     .teacher-chip span.icon { font-size: 1rem; }
@@ -89,29 +95,70 @@
     }
 
     .card {
-      background: radial-gradient(circle at top, rgba(248,250,252,0.06), transparent 50%),
-                  linear-gradient(160deg, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+      background: radial-gradient(circle at top, rgba(255,255,255,0.7), transparent 50%),
+                  linear-gradient(160deg, #fff8fb, #ffeaf4);
       border-radius: var(--radius);
-      border: 1px solid rgba(148,163,184,0.7);
+      border: 1px solid rgba(255,182,193,0.9);
       padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 6px;
       position: relative;
       overflow: hidden;
+      color: var(--text);
+      animation: floatCard 9s ease-in-out infinite;
+      transform-origin: center;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+      box-shadow: 0 14px 30px rgba(255, 105, 180, 0.18);
     }
 
-    .card::before {
+    .card::before,
+    .card::after {
       content: "";
       position: absolute;
-      inset: -40%;
-      background: radial-gradient(circle at top left, rgba(250,204,21,0.18), transparent 55%);
-      opacity: 0;
-      transition: opacity 0.2s ease;
+      inset: -35%;
+      background: radial-gradient(circle at top left, rgba(233,30,99,0.2), transparent 55%);
+      opacity: 0.22;
       pointer-events: none;
+      filter: blur(8px);
+      animation: driftGlow 16s ease-in-out infinite;
     }
 
-    .card:hover::before { opacity: 1; }
+    .card::after {
+      inset: -45%;
+      background: conic-gradient(from 120deg, rgba(255,255,255,0.25), rgba(255,154,200,0.2), rgba(255,255,255,0.08));
+      mix-blend-mode: screen;
+      opacity: 0.12;
+      animation-duration: 22s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px) scale(1.01) rotate(-0.4deg);
+      box-shadow: 0 22px 48px rgba(255, 105, 180, 0.35);
+    }
+
+    .card:hover::before { opacity: 0.38; }
+
+    .card:hover::after { opacity: 0.2; }
+
+    .card:nth-child(1) { animation-delay: 0s; }
+    .card:nth-child(2) { animation-delay: -1.4s; }
+    .card:nth-child(3) { animation-delay: -2.6s; }
+    .card:nth-child(4) { animation-delay: -4s; }
+
+    @keyframes floatCard {
+      0% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-4px) rotate(-0.3deg); }
+      50% { transform: translateY(1px) rotate(0.3deg); }
+      75% { transform: translateY(-3px) rotate(-0.2deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    @keyframes driftGlow {
+      0% { transform: translate(-4%, -6%) scale(1); }
+      50% { transform: translate(6%, 4%) scale(1.08); }
+      100% { transform: translate(-4%, -6%) scale(1); }
+    }
 
     .card-header {
       display: flex;
@@ -125,7 +172,7 @@
       align-items: center;
       gap: 8px;
       font-size: 0.98rem;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .card-title span.icon { font-size: 1.6rem; }
@@ -134,11 +181,11 @@
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--muted);
+      color: #6d2741;
       padding: 2px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(255,182,193,0.9);
+      background: rgba(255,255,255,0.8);
     }
 
     .card-body {
@@ -157,11 +204,12 @@
     .pill {
       border-radius: 999px;
       padding: 2px 7px;
-      border: 1px solid rgba(148,163,184,0.7);
-      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(255,182,193,0.9);
+      background: rgba(255,255,255,0.9);
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      color: #4a1d30;
     }
 
     .pill span.icon { font-size: 0.9rem; }
@@ -180,14 +228,14 @@
       border: none;
       padding: 7px 12px;
       font-size: 0.86rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      background: radial-gradient(circle at top, #fbbf24 0%, #f97316 45%, #ec4899 100%);
-      color: #111827;
+      background: radial-gradient(circle at top, #ffedd5 0%, #ff9ac8 45%, #f472b6 100%);
+      color: #3b0a1a;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.9);
+      box-shadow: 0 14px 30px rgba(255, 105, 180, 0.35);
       text-decoration: none;
       transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
     }
@@ -196,13 +244,13 @@
 
     .launch-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.95);
-      filter: brightness(1.04);
+      box-shadow: 0 18px 40px rgba(255, 105, 180, 0.4);
+      filter: brightness(1.05);
     }
 
     .launch-btn:active {
       transform: translateY(0);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.9);
+      box-shadow: 0 10px 20px rgba(255, 105, 180, 0.35);
     }
 
     .launch-note {
@@ -215,7 +263,7 @@
       font-size: 0.72rem;
       color: var(--muted);
       margin-top: 6px;
-      border-top: 1px solid rgba(31,41,55,0.9);
+      border-top: 1px solid rgba(255, 182, 193, 0.8);
       padding-top: 6px;
       display: flex;
       flex-wrap: wrap;
@@ -245,7 +293,7 @@
           Sound Simulations for Primary Science
         </h1>
         <p class="subtitle">
-          Two interactive labs for 10–12 year olds: one for sound waves and instruments, and one for the ear and hearing range.
+          Four interactive labs for 10–12 year olds: explore sound waves and instruments, the ear and hearing range, matter changing state, and a new electricity house-quest to spot circuit parts in the wild.
         </p>
       </div>
       <div class="teacher-chip">
@@ -318,6 +366,102 @@
           </span>
         </div>
       </article>
+
+      <!-- Card 3: states of matter -->
+      <article class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">🧊🔥</span>
+            <span>States of Matter Lab</span>
+          </div>
+          <span class="card-tag">Chemistry • Matter</span>
+        </div>
+        <div class="card-body">
+          Heat or cool particles and watch the system jump between solid, liquid, and gas. Students track spacing,
+          vibration, and collision patterns to explain how energy changes matter.
+        </div>
+        <div class="card-meta">
+          <span class="pill">
+            <span class="icon">🌡️</span> Temperature, particle motion
+          </span>
+          <span class="pill">
+            <span class="icon">👦</span> Ages: about 10–13
+          </span>
+        </div>
+        <div class="launch-row">
+          <a href="matter.html" class="launch-btn" target="_blank" rel="noopener">
+            <span class="icon">🚀</span>
+            Launch simulation
+          </a>
+          <span class="launch-note">
+            Use as a bridge to talk about melting, boiling, or why steam spreads.
+          </span>
+        </div>
+      </article>
+
+      <!-- Card 4: electricity practice game -->
+      <article class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">⚡</span>
+            <span>Electricity Practice: House Circuit Quest</span>
+          </div>
+          <span class="card-tag">Physics • Circuits</span>
+        </div>
+        <div class="card-body">
+          Walk room to room in a neon house, scan objects, and decide if they close a circuit. Meet LEDs, switches,
+          fuses, LDR porch lights, and dimmer resistors, then tweak a mini circuit builder to see brightness change.
+        </div>
+        <div class="card-meta">
+          <span class="pill">
+            <span class="icon">🔍</span> Hunt for circuit components
+          </span>
+          <span class="pill">
+            <span class="icon">🧠</span> LED, LDR, switch, resistor, fuse
+          </span>
+        </div>
+        <div class="launch-row">
+          <a href="electricity.html" class="launch-btn" target="_blank" rel="noopener">
+            <span class="icon">🚀</span>
+            Launch practice game
+          </a>
+          <span class="launch-note">
+            Great after basics of circuits; reinforces symbol spotting with playful scanning.
+          </span>
+        </div>
+      </article>
+
+      <!-- Card 5: revision hub -->
+      <article class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">📚</span>
+            <span>Revision Hub for the Final Exam</span>
+          </div>
+          <span class="card-tag">Study • Review</span>
+        </div>
+        <div class="card-body">
+          Jump into the full revision site with biology, chemistry, physics, and flashcard drills.
+          Built for last-minute prep so you can switch topics quickly and keep everything in one place.
+        </div>
+        <div class="card-meta">
+          <span class="pill">
+            <span class="icon">📝</span> Biology • Chemistry • Physics
+          </span>
+          <span class="pill">
+            <span class="icon">⚡</span> Flashcards & quick-fire checks
+          </span>
+        </div>
+        <div class="launch-row">
+          <a href="revision.html" class="launch-btn" target="_blank" rel="noopener">
+            <span class="icon">🚀</span>
+            Open revision website
+          </a>
+          <span class="launch-note">
+            Direct link to the revision hub; great for homework or final exam reviews.
+          </span>
+        </div>
+      </article>
     </section>
 
     <footer>
@@ -331,8 +475,8 @@
       <div>
         <strong>Tech notes:</strong>
         <ul>
-          <li>Both simulations run in a browser with no install needed.</li>
-          <li>If audio is muted, check the browser tab and system volume.</li>
+      <li>All simulations run in a browser with no install needed.</li>
+      <li>If audio is muted, check the browser tab and system volume.</li>
         </ul>
       </div>
     </footer>
