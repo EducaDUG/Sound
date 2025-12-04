@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electricity Practice - House Circuit Quest</title>
+  <style>
+    :root {
+      --bg: #0b1226;
+      --panel: #101a35;
+      --panel-2: #0e1533;
+      --accent: #ff93d3;
+      --accent-2: #7cd2ff;
+      --accent-3: #f4d35e;
+      --text: #f6f7ff;
+      --muted: #b9c2e5;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 18%, rgba(255,147,211,0.15), transparent 45%),
+                  radial-gradient(circle at 82% 12%, rgba(124,210,255,0.18), transparent 40%),
+                  linear-gradient(135deg, #0a1024, #0c1835 45%, #0c1f44 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1200px;
+      background: linear-gradient(145deg, rgba(16,26,53,0.95), rgba(14,21,51,0.96));
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.45);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      letter-spacing: -0.01em;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.45;
+      font-size: 0.98rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-size: 0.8rem;
+      background: rgba(255,147,211,0.14);
+      border: 1px solid rgba(255,147,211,0.5);
+      color: #ffd5f1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip.blue { background: rgba(124,210,255,0.12); border-color: rgba(124,210,255,0.5); color: #d9f3ff; }
+    .chip.gold { background: rgba(244,211,94,0.12); border-color: rgba(244,211,94,0.5); color: #fff4c8; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+    }
+
+    .panel {
+      background: linear-gradient(160deg, var(--panel), var(--panel-2));
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel small { color: var(--muted); }
+
+    .house-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .room {
+      position: relative;
+      background: radial-gradient(circle at 30% 20%, rgba(255,147,211,0.18), transparent 55%),
+                  linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 12px;
+      min-height: 120px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .room:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,0.25); border-color: rgba(255,147,211,0.6); }
+    .room.active { box-shadow: 0 16px 40px rgba(255,147,211,0.35); border-color: rgba(255,147,211,0.9); }
+
+    .room .name { font-weight: 800; letter-spacing: 0.02em; }
+    .room .blip { color: var(--muted); font-size: 0.82rem; }
+
+    .item-bubbles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .bubble {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(14,21,51,0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bubble.found { border-color: var(--accent); color: #ffe7fa; background: rgba(255,147,211,0.12); }
+
+    .controls { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-top: 10px; }
+    .btn {
+      background: linear-gradient(135deg, rgba(255,147,211,0.9), rgba(124,210,255,0.9));
+      color: #0a0f20;
+      font-weight: 800;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      box-shadow: 0 12px 26px rgba(255,147,211,0.24);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 18px 38px rgba(124,210,255,0.32); }
+    .btn:active { transform: translateY(0); box-shadow: 0 10px 18px rgba(255,147,211,0.2); }
+
+    .status {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px,1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .progress { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; margin-top: 8px; }
+    .progress .bar { height: 100%; background: linear-gradient(90deg, #ff93d3, #7cd2ff); width: 0%; transition: width 0.25s ease; }
+
+    .log { margin: 0; padding-left: 18px; color: var(--muted); }
+
+    .flex { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    .inspect-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 10px; margin-top: 8px; }
+    .inspect-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .inspect-card header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .inspect-card h3 { margin: 0; font-size: 1rem; }
+    .inspect-card button { justify-self: flex-start; }
+
+    .symbol-tag { font-size: 0.8rem; color: #fef3ff; background: rgba(255,147,211,0.12); border: 1px solid rgba(255,147,211,0.6); padding: 3px 8px; border-radius: 999px; }
+
+    .circuit-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    .circuit-panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 10px;
+      position: relative;
+    }
+
+    .gauge {
+      height: 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .gauge .fill {
+      height: 100%;
+      background: linear-gradient(90deg, #26e0a4, #7cd2ff, #ff93d3);
+      width: 15%;
+      transition: width 0.25s ease;
+    }
+
+    .symbol-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .symbol {
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.04);
+      min-width: 110px;
+    }
+
+    .symbol strong { display: block; }
+
+    .mini-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .mini-map div {
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      text-align: center;
+      padding: 8px 6px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .mini-map .here { background: rgba(255,147,211,0.18); color: #ffe8fb; border-color: rgba(255,147,211,0.7); font-weight: 800; }
+
+    @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { body { padding: 10px; } .app { padding: 14px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>⚡ Electricity Practice — House Circuit Quest</h1>
+        <p class="subtitle">Move room to room, scan everyday objects, and spot which ones close a circuit. Check LEDs, LDR porch lights, switches, resistors, and fuses, then run a mini build to see how they affect brightness and current.</p>
+        <div class="tag-row">
+          <span class="chip"><span>🎮</span> Exploration game</span>
+          <span class="chip blue"><span>🔌</span> Circuits & components</span>
+          <span class="chip gold"><span>👦</span> Ages 10–13</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>🏠 House Map <small>(click to move)</small></h2>
+        <div class="house-grid" id="house-grid"></div>
+
+        <div class="controls">
+          <button class="btn" onclick="movePlayer('up')">⬆️ Up</button>
+          <button class="btn" onclick="movePlayer('left')">⬅️ Left</button>
+          <button class="btn" onclick="movePlayer('right')">➡️ Right</button>
+          <button class="btn" onclick="movePlayer('down')">⬇️ Down</button>
+        </div>
+
+        <div class="status">
+          <div class="stat-card">
+            <strong>Scans completed</strong>
+            <div class="progress"><div class="bar" id="progress-bar"></div></div>
+            <p class="blip"><span id="scan-count">0</span>/<span id="total-items">0</span> items verified</p>
+          </div>
+          <div class="stat-card">
+            <strong>Room</strong>
+            <p class="blip" id="room-name">—</p>
+            <div class="mini-map" id="mini-map"></div>
+          </div>
+          <div class="stat-card">
+            <strong>Notes</strong>
+            <ul class="log" id="log"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>🔍 Inspect Objects <small>(tap a card to scan)</small></h2>
+        <div class="inspect-list" id="inspect-list"></div>
+
+        <h2 style="margin-top: 12px;">🛠️ Quick Circuit Builder</h2>
+        <div class="circuit-zone">
+          <div class="circuit-panel">
+            <p class="blip">Toggle parts to see how the circuit behaves. The meter estimates brightness/current.</p>
+            <div class="flex">
+              <label><input type="checkbox" id="switch-toggle" checked onchange="updateCircuit()" /> Switch closed</label>
+              <label><input type="checkbox" id="led-toggle" checked onchange="updateCircuit()" /> LED in circuit</label>
+              <label><input type="checkbox" id="ldr-toggle" onchange="updateCircuit()" /> Night mode (LDR dark)</label>
+            </div>
+            <div class="flex" style="margin-top: 6px;">
+              <label>Resistor (dimmer): <input type="range" id="resistor" min="10" max="120" value="40" oninput="updateCircuit()" /></label>
+            </div>
+            <div class="gauge" style="margin-top: 10px;"><div class="fill" id="gauge-fill"></div></div>
+            <p class="blip" id="circuit-status">Circuit ready.</p>
+          </div>
+          <div class="circuit-panel">
+            <strong>Symbols quick look</strong>
+            <div class="symbol-strip">
+              <div class="symbol"><strong>LED</strong><span>▶|◀ triangle/arrow + diode bar</span></div>
+              <div class="symbol"><strong>LDR</strong><span>◯ zig-zag + arrows</span></div>
+              <div class="symbol"><strong>Switch</strong><span>Gap that opens/closes</span></div>
+              <div class="symbol"><strong>Resistor</strong><span>Zig-zag line</span></div>
+              <div class="symbol"><strong>Fuse</strong><span>Small box in series</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const rooms = [
+      { id: 'hall', name: 'Hallway', hint: 'Doorbell & breaker panel', items: [
+        { id: 'doorbell', label: 'Doorbell button', component: 'Switch', symbol: 'open/close gap', fact: 'Doorbells use a low-voltage push switch to close a circuit and fire the chime coil.' },
+        { id: 'breaker', label: 'Breaker panel', component: 'Fuse/Breaker', symbol: 'box in series', fact: 'Breakers act like resettable fuses. They open when current is too high.' }
+      ]},
+      { id: 'lounge', name: 'Lounge', hint: 'Lamp & dimmer', items: [
+        { id: 'lamp', label: 'Floor lamp', component: 'LED', symbol: 'diode with arrows', fact: 'LED lamps are efficient and need the correct polarity in DC circuits.' },
+        { id: 'dimmer', label: 'Dimmer wheel', component: 'Variable Resistor', symbol: 'arrow through resistor', fact: 'Dimmers change resistance to limit current, so bulbs glow softer or brighter.' }
+      ]},
+      { id: 'kitchen', name: 'Kitchen', hint: 'Fridge light & outlet', items: [
+        { id: 'fridge', label: 'Fridge door lamp', component: 'Switch', symbol: 'normally closed', fact: 'A hidden switch opens when the door shuts, turning the light off to save power.' },
+        { id: 'outlet', label: 'Outlet tester', component: 'Conductor check', symbol: 'wires', fact: 'Conductors complete a path; insulators (plastic plugs) block current to keep you safe.' }
+      ]},
+      { id: 'porch', name: 'Porch', hint: 'Night light with sensor', items: [
+        { id: 'nightlight', label: 'Porch light', component: 'LED', symbol: 'diode with arrows', fact: 'LEDs glow when forward-biased. Reverse them and almost no current flows.' },
+        { id: 'ldr', label: 'Light sensor', component: 'LDR', symbol: 'resistor with arrows', fact: 'LDR resistance drops in bright light and rises in the dark—perfect for auto lights.' }
+      ]},
+      { id: 'garage', name: 'Workshop', hint: 'Bench resistor & soldering lamp', items: [
+        { id: 'bench', label: 'Bench lamp', component: 'Switch', symbol: 'toggle', fact: 'Switches physically open or close a gap to control current.' },
+        { id: 'resistor', label: 'Spare resistor', component: 'Fixed Resistor', symbol: 'zig-zag', fact: 'Resistors slow current. In series they also protect LEDs from burning out.' }
+      ]},
+      { id: 'study', name: 'Study', hint: 'USB charger & indicator', items: [
+        { id: 'charger', label: 'USB charger', component: 'LED indicator', symbol: 'diode + arrows', fact: 'Tiny LEDs show power is present. If off, check the switch or fuse first.' },
+        { id: 'fan', label: 'Desk fan', component: 'Motor load', symbol: 'circle with M', fact: 'Motors convert electrical to kinetic energy—watch for fuses to avoid overload.' }
+      ]}
+    ];
+
+    const neighbors = {
+      hall: { up: null, down: 'lounge', left: null, right: 'kitchen' },
+      lounge: { up: 'hall', down: 'porch', left: null, right: 'garage' },
+      kitchen: { up: null, down: 'porch', left: 'hall', right: 'study' },
+      porch: { up: 'lounge', down: null, left: null, right: 'kitchen' },
+      garage: { up: 'kitchen', down: null, left: 'lounge', right: null },
+      study: { up: null, down: null, left: 'kitchen', right: null }
+    };
+
+    let currentRoom = 'hall';
+    const scanned = new Set();
+
+    function renderRooms() {
+      const grid = document.getElementById('house-grid');
+      grid.innerHTML = rooms.map(room => {
+        const found = room.items.filter(it => scanned.has(it.id)).length;
+        const active = room.id === currentRoom ? 'active' : '';
+        return `<div class="room ${active}" onclick="goTo('${room.id}')">
+          <div class="name">${room.name}</div>
+          <div class="blip">${room.hint}</div>
+          <div class="item-bubbles">${room.items.map(it => `<span class="bubble ${scanned.has(it.id) ? 'found' : ''}">${it.component}</span>`).join('')}</div>
+          <div class="blip">${found}/${room.items.length} scanned</div>
+        </div>`;
+      }).join('');
+      document.getElementById('total-items').innerText = rooms.reduce((a,r) => a + r.items.length, 0);
+      document.getElementById('scan-count').innerText = scanned.size;
+      document.getElementById('room-name').innerText = rooms.find(r => r.id === currentRoom).name;
+      document.getElementById('progress-bar').style.width = `${(scanned.size / rooms.reduce((a,r)=>a+r.items.length,0))*100}%`;
+      renderMiniMap();
+      renderInspectList();
+    }
+
+    function renderMiniMap() {
+      const mini = document.getElementById('mini-map');
+      mini.innerHTML = rooms.map(r => `<div class="${r.id === currentRoom ? 'here' : ''}">${r.name}</div>`).join('');
+    }
+
+    function renderInspectList() {
+      const list = document.getElementById('inspect-list');
+      const room = rooms.find(r => r.id === currentRoom);
+      list.innerHTML = room.items.map(item => {
+        const done = scanned.has(item.id);
+        return `<article class="inspect-card">
+          <header>
+            <h3>${item.label}</h3>
+            <span class="symbol-tag">${item.component}</span>
+          </header>
+          <p class="blip">Symbol hint: ${item.symbol}</p>
+          <p class="blip">${item.fact}</p>
+          <button class="btn" onclick="scan('${item.id}')">${done ? 'Rescan' : 'Scan & add note'}</button>
+        </article>`;
+      }).join('');
+    }
+
+    function goTo(id) {
+      currentRoom = id;
+      renderRooms();
+    }
+
+    function movePlayer(dir) {
+      const next = neighbors[currentRoom][dir];
+      if (next) { currentRoom = next; renderRooms(); }
+    }
+
+    function scan(id) {
+      if (!scanned.has(id)) {
+        scanned.add(id);
+        addLog(`Logged ${id} as part of a circuit in the ${rooms.find(r=>r.items.some(i=>i.id===id)).name}.`);
+      } else {
+        addLog(`Re-checked ${id}: still working.`);
+      }
+      renderRooms();
+    }
+
+    function addLog(text) {
+      const log = document.getElementById('log');
+      const li = document.createElement('li');
+      li.textContent = text;
+      log.prepend(li);
+    }
+
+    function updateCircuit() {
+      const switchClosed = document.getElementById('switch-toggle').checked;
+      const ledOn = document.getElementById('led-toggle').checked;
+      const ldrDark = document.getElementById('ldr-toggle').checked;
+      const resistor = Number(document.getElementById('resistor').value);
+
+      let flow = switchClosed ? 1 : 0;
+      if (!ledOn) flow *= 0.3;
+      flow *= 120 / resistor;
+      if (ldrDark) flow *= 1.4;
+
+      const pct = Math.min(100, Math.max(0, flow * 60));
+      document.getElementById('gauge-fill').style.width = `${pct}%`;
+
+      const status = document.getElementById('circuit-status');
+      if (!switchClosed) status.textContent = 'Switch is open — no current.';
+      else if (pct < 20) status.textContent = 'Very dim (high resistance).';
+      else if (pct < 55) status.textContent = 'Medium glow — try lowering resistance.';
+      else status.textContent = 'Bright circuit! LED is lit.';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const map = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' };
+      if (map[e.key]) { movePlayer(map[e.key]); }
+    });
+
+    renderRooms();
+    updateCircuit();
+  </script>
+</body>
+</html>
