@@ -284,6 +284,8 @@
 
     .inspect-body { display: grid; gap: 6px; }
 
+    }
+
     .inspect-card header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .inspect-card h3 { margin: 0; font-size: 1rem; }
     .inspect-card button { justify-self: flex-start; }
@@ -344,6 +346,7 @@
     .mini-map .here { background: rgba(255,147,211,0.18); color: #ffe8fb; border-color: rgba(255,147,211,0.7); font-weight: 800; }
 
     @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } .inspect-card { grid-template-columns: 1fr; } }
+    @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
     @media (max-width: 720px) { body { padding: 10px; } .app { padding: 14px; } }
   </style>
 </head>
@@ -461,6 +464,29 @@
       { id: 'study', name: 'Study', hint: 'USB charger & indicator', image: 'https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80', items: [
         { id: 'charger', label: 'USB charger', component: 'LED indicator', symbol: 'diode + arrows', fact: 'Tiny LEDs show power is present. If off, check the switch or fuse first.', image: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=600&q=80' },
         { id: 'fan', label: 'Desk fan', component: 'Motor load', symbol: 'circle with M', fact: 'Motors convert electrical to kinetic energy—watch for fuses to avoid overload.', image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80' }
+      { id: 'hall', name: 'Hallway', hint: 'Doorbell & breaker panel', items: [
+        { id: 'doorbell', label: 'Doorbell button', component: 'Switch', symbol: 'open/close gap', fact: 'Doorbells use a low-voltage push switch to close a circuit and fire the chime coil.' },
+        { id: 'breaker', label: 'Breaker panel', component: 'Fuse/Breaker', symbol: 'box in series', fact: 'Breakers act like resettable fuses. They open when current is too high.' }
+      ]},
+      { id: 'lounge', name: 'Lounge', hint: 'Lamp & dimmer', items: [
+        { id: 'lamp', label: 'Floor lamp', component: 'LED', symbol: 'diode with arrows', fact: 'LED lamps are efficient and need the correct polarity in DC circuits.' },
+        { id: 'dimmer', label: 'Dimmer wheel', component: 'Variable Resistor', symbol: 'arrow through resistor', fact: 'Dimmers change resistance to limit current, so bulbs glow softer or brighter.' }
+      ]},
+      { id: 'kitchen', name: 'Kitchen', hint: 'Fridge light & outlet', items: [
+        { id: 'fridge', label: 'Fridge door lamp', component: 'Switch', symbol: 'normally closed', fact: 'A hidden switch opens when the door shuts, turning the light off to save power.' },
+        { id: 'outlet', label: 'Outlet tester', component: 'Conductor check', symbol: 'wires', fact: 'Conductors complete a path; insulators (plastic plugs) block current to keep you safe.' }
+      ]},
+      { id: 'porch', name: 'Porch', hint: 'Night light with sensor', items: [
+        { id: 'nightlight', label: 'Porch light', component: 'LED', symbol: 'diode with arrows', fact: 'LEDs glow when forward-biased. Reverse them and almost no current flows.' },
+        { id: 'ldr', label: 'Light sensor', component: 'LDR', symbol: 'resistor with arrows', fact: 'LDR resistance drops in bright light and rises in the dark—perfect for auto lights.' }
+      ]},
+      { id: 'garage', name: 'Workshop', hint: 'Bench resistor & soldering lamp', items: [
+        { id: 'bench', label: 'Bench lamp', component: 'Switch', symbol: 'toggle', fact: 'Switches physically open or close a gap to control current.' },
+        { id: 'resistor', label: 'Spare resistor', component: 'Fixed Resistor', symbol: 'zig-zag', fact: 'Resistors slow current. In series they also protect LEDs from burning out.' }
+      ]},
+      { id: 'study', name: 'Study', hint: 'USB charger & indicator', items: [
+        { id: 'charger', label: 'USB charger', component: 'LED indicator', symbol: 'diode + arrows', fact: 'Tiny LEDs show power is present. If off, check the switch or fuse first.' },
+        { id: 'fan', label: 'Desk fan', component: 'Motor load', symbol: 'circle with M', fact: 'Motors convert electrical to kinetic energy—watch for fuses to avoid overload.' }
       ]}
     ];
 
@@ -518,6 +544,13 @@
             <p class="blip">${item.fact}</p>
             <button class="btn" onclick="scan('${item.id}')">${done ? 'Rescan' : 'Scan & add note'}</button>
           </div>
+          <header>
+            <h3>${item.label}</h3>
+            <span class="symbol-tag">${item.component}</span>
+          </header>
+          <p class="blip">Symbol hint: ${item.symbol}</p>
+          <p class="blip">${item.fact}</p>
+          <button class="btn" onclick="scan('${item.id}')">${done ? 'Rescan' : 'Scan & add note'}</button>
         </article>`;
       }).join('');
     }
